@@ -2,37 +2,25 @@
 terraform {
   required_providers {
     aws = {
-      source = "hashicorp/aws"
-      version = "3.50.0"
+      source  = "hashicorp/aws"
+      version = "~> 3.0"
     }
   }
 }
 
-# Provider-1 for us-east-1 (Default Provider)
+# Provider Block
 provider "aws" {
-  region = "us-east-1"
+  region  = "ap-south-1"
   profile = "default"
 }
 
-# Provider-2 for us-west-1
-provider "aws" {
-  region = "us-west-1"
-  alias = "my-west"
-  profile = "default"
-}
-
-# Resource Block to Create VPC in us-east-1 which uses default provider
-resource "aws_vpc" "vpc-us-east-1" {
-  cidr_block = "10.1.0.0/16"
+# Create 5 EC2 Instance
+resource "aws_instance" "web" {
+  ami           = "ami-079b5e5b3971bd10d" # Amazon Linux
+  instance_type = "t2.micro"
+  count         = 5
   tags = {
-    "Name" = "vpc-us-east-1"
-  }
-}
-
-resource "aws_vpc" "vpc-us-west-1" {
-  cidr_block = "10.1.0.0/16"
-  provider = aws.my-west
-  tags = {
-    "Name" = "vpc-us-west-1"
+    #"Name" = "web"
+    "Name" = "web-${count.index}"
   }
 }
